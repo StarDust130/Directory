@@ -1,7 +1,12 @@
 import SearchForm from "@/components/SearchForm";
 
-export default function Home() {
-  console.log("Hello World from Next.js");
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+}) {
+  
+  const query = (await searchParams).query;
 
   return (
     <>
@@ -14,10 +19,9 @@ export default function Home() {
         <p className="sub-heading !max-w-3xl">
           Submit your startup idea and get feedback from the community. <br />
           Connect with other entrepreneurs and grow your network.
-
         </p>
 
-        <SearchForm />
+        <SearchForm query={query} />
       </section>
     </>
   );

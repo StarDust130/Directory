@@ -1,14 +1,10 @@
 import Form from "next/form";
 import SearchFormReset from "./SearchFormReset";
-import { Search, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 
-const SearchForm = () => {
-  const query = "abc";
-
+const SearchForm = ({ query }: { query?: string }) => {
   return (
     <Form action="/" className="search-form">
-      {/* On submission, the input value will be appended to 
-          the URL, e.g. /search?query=abc */}
       <input
         name="query"
         defaultValue={""}
