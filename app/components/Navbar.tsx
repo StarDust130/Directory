@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 const Navbar = async () => {
   const session = await auth();
 
+  console.log(session);
+
+  
+
   return (
     <header className="px-5 py-3 bg-white shadow-sm font-work-sans">
       <nav className="flex justify-between items-center">
@@ -17,6 +21,7 @@ const Navbar = async () => {
 
         <div className="flex items-center gap-5 text-black">
           {session && session?.user ? (
+            //! IF LOGGED IN ✅
             <>
               <Link href="/startup/create">
                 <span className="max-sm:hidden">Create</span>
@@ -36,7 +41,7 @@ const Navbar = async () => {
                 </Button>
               </form>
 
-              <Link href={`/user/${session?.user?.id}`}>
+              <Link href={`/user/${session?.id}`}>
                 <Avatar className="size-10">
                   <AvatarImage
                     src={session?.user?.image || ""}
@@ -47,11 +52,12 @@ const Navbar = async () => {
               </Link>
             </>
           ) : (
+            //! IF NOT LOGGED IN 🚯
             <form
               action={async () => {
                 "use server";
 
-                await signIn("github");
+                await signIn("github", { callbackUrl: "/" });
               }}
             >
               <Button type="submit">Login</Button>
