@@ -21,9 +21,19 @@ const Navbar = async () => {
           {session && session?.user ? (
             //! IF LOGGED IN ✅
             <>
-              <Link href="/startup/create">
-                <Button className="max-sm:hidden">Create</Button>
-                <BadgePlus className="size-6 sm:hidden" />
+              <Link href="/startup/create" className="flex items-center">
+                {/* Visible on large screens */}
+                <div className="hidden sm:flex items-center justify-center">
+                  <Button>
+                    Create{" "}
+                    <span>
+                      <BadgePlus className="size-10" />
+                    </span>
+                  </Button>
+                </div>
+
+                {/* Visible only on small screens */}
+                <BadgePlus className="block sm:hidden size-6" />
               </Link>
 
               <form
@@ -33,8 +43,10 @@ const Navbar = async () => {
                   await signOut({ redirectTo: "/" });
                 }}
               >
-                <button  type="submit">
-                  <span className="max-sm:hidden text-sm font-medium">Logout</span>
+                <button type="submit">
+                  <span className="max-sm:hidden text-sm font-medium">
+                    Logout
+                  </span>
                   <LogOut className="size-6 sm:hidden " />
                 </button>
               </form>
