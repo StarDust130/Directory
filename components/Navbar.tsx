@@ -10,8 +10,6 @@ const Navbar = async () => {
 
   console.log(session);
 
-  
-
   return (
     <header className="px-5 py-3 bg-white shadow-sm font-work-sans">
       <nav className="flex justify-between items-center">
@@ -24,7 +22,7 @@ const Navbar = async () => {
             //! IF LOGGED IN ✅
             <>
               <Link href="/startup/create">
-                <span className="max-sm:hidden">Create</span>
+                <Button className="max-sm:hidden">Create</Button>
                 <BadgePlus className="size-6 sm:hidden" />
               </Link>
 
@@ -35,13 +33,13 @@ const Navbar = async () => {
                   await signOut({ redirectTo: "/" });
                 }}
               >
-                <Button type="submit">
+                <Button variant={"ghost"} type="submit">
                   <span className="max-sm:hidden">Logout</span>
-                  <LogOut className="size-6 sm:hidden text-red-500" />
+                  <LogOut className="size-6 sm:hidden " />
                 </Button>
               </form>
 
-              <Link href={`/user/${session?.id}`}>
+              <Link href={`/user/${session?.user?.id}`}>
                 <Avatar className="size-10">
                   <AvatarImage
                     src={session?.user?.image || ""}
