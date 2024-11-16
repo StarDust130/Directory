@@ -1,9 +1,13 @@
-import { StartupCardType } from "@/app/(root)/page";
 import { formatDate } from "@/lib/utils";
 import { EyeIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { Author, Startup } from "@/sanity/types";
+
+export type StartupCardType = Omit<Startup, "author"> & {
+  author?: Author;
+};
 
 const StartupCard = ({ post }: { post: StartupCardType }) => {
   const {
@@ -41,7 +45,7 @@ const StartupCard = ({ post }: { post: StartupCardType }) => {
         <Link href={`/user/${author?._id}`}>
           <Image
             src="https:placehold.co/48x48"
-            alt={title}
+            alt={title || "Default Alt Text"}
             width={48}
             height={48}
             className="rounded-full"
@@ -52,11 +56,17 @@ const StartupCard = ({ post }: { post: StartupCardType }) => {
       <Link href={`/startup/${_id}`}>
         <p className="startup-card_desc">{description}</p>
 
-        <Image width={300} height={300} src={image} alt={title} className="startup-card_img" />
+        <Image
+          width={300}
+          height={300}
+          src={image || "https://placehold.co/300x300"}
+          alt={title || "Default Alt Text"}
+          className="startup-card_img"
+        />
       </Link>
 
       <div className="flex-between gap-3 mt-3">
-        <Link href={`/?query=${category.toLocaleLowerCase()}`}>
+        <Link href={`/?query=${category?.toLocaleLowerCase()}`}>
           <p className="text-16-medium">{category}</p>
         </Link>
 
