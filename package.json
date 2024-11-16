@@ -24,6 +24,7 @@
     "@sanity/icons": "^3.4.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.64.1",
+    "@sentry/nextjs": "^8.38.0",
     "@tailwindcss/typography": "^0.5.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
