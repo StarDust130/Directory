@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 const SearchFormReset = () => {
   const reset = () => {
