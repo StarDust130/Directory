@@ -1,19 +1,69 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import MDEitor from "@uiw/react-md-editor";
 import { Button } from "./ui/button";
 import { Loader, Send } from "lucide-react";
+import { formSchema } from "@/lib/validation";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 
 const StartupForm = () => {
-  const [errors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState<string>("");
-  const isPending = false;
+  const { toast } = useToast();
+
+  const handleFormSubmit = async (prevState: any, formData: FormData) => {
+    try {
+      const formValues = {
+        title: formData.get("title") as string,
+        description: formData.get("description") as string,
+        category: formData.get("category") as string,
+        link: formData.get("link") as string,
+        pitch,
+      };
+
+      await formSchema.parseAsync(formValues); // Validate form values
+
+      console.log("Form values", formValues);
+      toast({
+        title: "Success",
+        description: "Your pitch has been submitted successfully",
+      });
+
+      // const result = await createIdea(prevState, formData , pitch);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+      });
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.flatten().fieldErrors;
+
+        setErrors(fieldErrors as unknown as Record<string, string>);
+
+        return { ...prevState, error: "Validation Failed", status: "ERROR" };
+      }
+
+      return {
+        ...prevState,
+        error: "An unexpected error occurred. Please try again later.",
+        status: "ERROR",
+      };
+    }
+  };
+
+  const [state, formAction, isPending] = useActionState(handleFormSubmit, {
+    error: "",
+    status: "INITIAL",
+  });
 
   return (
-    <form action={() => {}} className="startup-form">
+    <form action={formAction} className="startup-form">
       <div>
         <label htmlFor="title" className="startup-form_label">
           TITLE
@@ -45,15 +95,15 @@ const StartupForm = () => {
       </div>
 
       <div>
-        <label htmlFor="Category" className="startup-form_label">
-          Category
+        <label htmlFor="category" className="startup-form_label">
+          category
         </label>
         <Input
-          id="Category"
-          name="Category"
+          id="category"
+          name="category"
           className="startup-form_input"
           required
-          placeholder="Startup Category (e.g. Tech, AI, Health)"
+          placeholder="Startup category (e.g. Tech, AI, Health)"
         />
         {errors.category && (
           <p className="startup-form_error">{errors.category}</p>
