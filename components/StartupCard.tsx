@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { cn, formatDate } from "@/lib/utils";
 import { EyeIcon } from "lucide-react";
 import Link from "next/link";
@@ -41,11 +43,11 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
         </div>
         <Link href={`/user/${author?._id}`}>
           <Image
-            src="https:placehold.co/48x48"
-            alt={title || "Default Alt Text"}
+            src={author?.image!}
+            alt={author?.name!}
             width={48}
             height={48}
-            className="rounded-full"
+            className="rounded-full w-14 h-14"
           />
         </Link>
       </div>
@@ -53,14 +55,9 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
       <Link href={`/startup/${_id}`}>
         <p className="startup-card_desc">{description}</p>
 
-        <Image
-          width={300}
-          height={300}
-          src={image || "https://placehold.co/300x300"}
-          alt={title || "Default Alt Text"}
-          className="startup-card_img"
-        />
+        <img src={image} alt="placeholder" className="startup-card_img" />
       </Link>
+
       <div className="flex-between gap-3 mt-5">
         <Link href={`/?query=${category?.toLowerCase()}`}>
           <p className="text-16-medium">{category}</p>
