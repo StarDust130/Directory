@@ -80,7 +80,7 @@ const StartupForm = () => {
   });
 
   return (
-    <form action={formAction} className="startup-form">
+    <form action={formAction} className="startup-form" suppressHydrationWarning>
       <div>
         <label htmlFor="title" className="startup-form_label">
           Title
@@ -164,6 +164,7 @@ const StartupForm = () => {
           previewOptions={{
             disallowedElements: ["style"],
           }}
+          className="startup-form_editor"
         />
 
         {errors.pitch && <p className="startup-form_error">{errors.pitch}</p>}
