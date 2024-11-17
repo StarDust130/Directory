@@ -1,8 +1,4 @@
-
-
 const StartupForm = () => {
-  return (
-    <div>StartupForm</div>
-  )
-}
-export default StartupForm
+  return <form action={() => {}}>StartupForm</form>;
+};
+export default StartupForm;
