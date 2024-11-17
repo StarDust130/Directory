@@ -17,3 +17,7 @@ export function formatNumber(number: number): string {
   return `${number} ${number === 1 ? "view" : "views"}`;
 }
 
+export function parseServerActionResponse<T>(response: T) {
+  return JSON.parse(JSON.stringify(response));
+}
+

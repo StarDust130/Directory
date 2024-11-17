@@ -1,20 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
-import { useActionState, useState } from "react";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import MDEitor from "@uiw/react-md-editor";
-import { Button } from "./ui/button";
-import { Loader, Send } from "lucide-react";
+import React, { useState, useActionState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import MDEditor from "@uiw/react-md-editor";
+import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
 import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [pitch, setPitch] = useState<string>("");
+  const [pitch, setPitch] = useState("");
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -26,32 +31,44 @@ const StartupForm = () => {
         pitch,
       };
 
-      await formSchema.parseAsync(formValues); // Validate form values
+      await formSchema.parseAsync(formValues);
 
-      console.log("Form values", formValues);
-      toast({
-        title: "Success",
-        description: "Your pitch has been submitted successfully",
-      });
+      const result = await createPitch(prevState, formData, pitch);
 
-      // const result = await createIdea(prevState, formData , pitch);
+      if (result.status == "SUCCESS") {
+        toast({
+          title: "Success",
+          description: "Your startup pitch has been created successfully",
+        });
+
+        router.push(`/startup/${result._id}`);
+      }
+
+      return result;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErorrs = error.flatten().fieldErrors;
+
+        setErrors(fieldErorrs as unknown as Record<string, string>);
+
+        toast({
+          title: "Error",
+          description: "Please check your inputs and try again",
+          variant: "destructive",
+        });
+
+        return { ...prevState, error: "Validation failed", status: "ERROR" };
+      }
+
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again later.",
+        description: "An unexpected error has occurred",
         variant: "destructive",
       });
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors;
-
-        setErrors(fieldErrors as unknown as Record<string, string>);
-
-        return { ...prevState, error: "Validation Failed", status: "ERROR" };
-      }
 
       return {
         ...prevState,
-        error: "An unexpected error occurred. Please try again later.",
+        error: "An unexpected error has occurred",
         status: "ERROR",
       };
     }
@@ -66,7 +83,7 @@ const StartupForm = () => {
     <form action={formAction} className="startup-form">
       <div>
         <label htmlFor="title" className="startup-form_label">
-          TITLE
+          Title
         </label>
         <Input
           id="title"
@@ -75,12 +92,13 @@ const StartupForm = () => {
           required
           placeholder="Startup Title"
         />
+
         {errors.title && <p className="startup-form_error">{errors.title}</p>}
       </div>
 
       <div>
         <label htmlFor="description" className="startup-form_label">
-          DESCRIPTION
+          Description
         </label>
         <Textarea
           id="description"
@@ -89,22 +107,24 @@ const StartupForm = () => {
           required
           placeholder="Startup Description"
         />
-        {errors.title && (
+
+        {errors.description && (
           <p className="startup-form_error">{errors.description}</p>
         )}
       </div>
 
       <div>
         <label htmlFor="category" className="startup-form_label">
-          category
+          Category
         </label>
         <Input
           id="category"
           name="category"
           className="startup-form_input"
           required
-          placeholder="Startup category (e.g. Tech, AI, Health)"
+          placeholder="Startup Category (Tech, Health, Education...)"
         />
+
         {errors.category && (
           <p className="startup-form_error">{errors.category}</p>
         )}
@@ -121,6 +141,7 @@ const StartupForm = () => {
           required
           placeholder="Startup Image URL"
         />
+
         {errors.link && <p className="startup-form_error">{errors.link}</p>}
       </div>
 
@@ -128,7 +149,8 @@ const StartupForm = () => {
         <label htmlFor="pitch" className="startup-form_label">
           Pitch
         </label>
-        <MDEitor
+
+        <MDEditor
           value={pitch}
           onChange={(value) => setPitch(value as string)}
           id="pitch"
@@ -137,13 +159,13 @@ const StartupForm = () => {
           style={{ borderRadius: 20, overflow: "hidden" }}
           textareaProps={{
             placeholder:
-              "Briefly describe your idea and what problem it solves ",
+              "Briefly describe your idea and what problem it solves",
           }}
           previewOptions={{
             disallowedElements: ["style"],
           }}
-          className="startup-form_editor"
         />
+
         {errors.pitch && <p className="startup-form_error">{errors.pitch}</p>}
       </div>
 
@@ -152,17 +174,11 @@ const StartupForm = () => {
         className="startup-form_btn text-white"
         disabled={isPending}
       >
-        {isPending ? (
-          <span className="flex gap-2 justify-center brightness-200 items-center">
-            Submitting... <Loader className="animate-spin" />
-          </span>
-        ) : (
-          <span className="flex  justify-center brightness-200 items-center">
-            Submit Your Pitch <Send className="size-6 ml-2" />
-          </span>
-        )}
+        {isPending ? "Submitting..." : "Submit Your Pitch"}
+        <Send className="size-6 ml-2" />
       </Button>
     </form>
   );
 };
+
 export default StartupForm;
