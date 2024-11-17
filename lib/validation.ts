@@ -1,12 +1,17 @@
 import { z } from "zod";
 
 export const formSchema = z.object({
-  title: z.string().min(3).max(100),
-  description: z.string().min(20).max(500),
-  category: z.string().min(3).max(20),
+  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
+  description: z
+    .string()
+    .min(10, { message: "Description must be at least 10 characters" })
+    .max(500, { message: "Description must be at most 500 characters" }),
+  category: z
+    .string()
+    .min(2, { message: "Category must be at least 2 characters" }),
   link: z
     .string()
-    .url()
+    .url({ message: "Invalid URL" })
     .refine(async (url) => {
       try {
         const res = await fetch(url, { method: "HEAD" });
@@ -17,5 +22,7 @@ export const formSchema = z.object({
         return false;
       }
     }),
-  pitch: z.string().min(10),
+  pitch: z
+    .string()
+    .min(10, { message: "Pitch must be at least 10 characters" }),
 });
