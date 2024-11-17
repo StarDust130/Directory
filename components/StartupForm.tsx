@@ -5,10 +5,10 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import MDEitor from "@uiw/react-md-editor";
 import { Button } from "./ui/button";
-import { Loader } from "lucide-react";
+import { Loader, Send } from "lucide-react";
 
 const StartupForm = () => {
-  const [errors, Seterrors] = useState<Record<string, string>>({});
+  const [errors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState<string>("");
   const isPending = false;
 
@@ -97,13 +97,19 @@ const StartupForm = () => {
         {errors.pitch && <p className="startup-form_error">{errors.pitch}</p>}
       </div>
 
-      <Button type="submit" className="startup-form_btn" disabled={isPending}>
+      <Button
+        type="submit"
+        className="startup-form_btn text-white"
+        disabled={isPending}
+      >
         {isPending ? (
           <span className="flex gap-2 justify-center brightness-200 items-center">
             Submitting... <Loader className="animate-spin" />
           </span>
         ) : (
-          "Submit"
+          <span className="flex  justify-center brightness-200 items-center">
+            Submit Your Pitch <Send className="size-6 ml-2" />
+          </span>
         )}
       </Button>
     </form>
